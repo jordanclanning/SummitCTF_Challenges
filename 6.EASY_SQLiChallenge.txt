@@ -1,0 +1,277 @@
+Rename:     EASY_SQLiChallenge
+
+
+Install apache and PHP
+    sudo apt install -y apache2 php libapache2-mod-php
+
+Install MySQL
+    sudo apt install -y mysql-server php-mysql
+
+Running MySQL
+-----START-------------
+
+CREATE DATABASE Summit;
+
+USE Summit;
+
+CREATE TABLE users (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    username VARCHAR(50),
+    password VARCHAR(50)
+);
+
+INSERT INTO users (username, password) VALUES
+('admin','password123'),
+('ops','summitops');
+
+CREATE USER 'ctfuser'@'localhost' IDENTIFIED BY 'ctfpass';
+GRANT ALL PRIVILEGES ON Summit.* TO 'ctfuser'@'localhost';
+FLUSH PRIVILEGES;
+EXIT;
+
+
+
+----------END------------
+
+
+Created Directory for Assets and then subdirs for CSS and Images
+
+
+ran: sudo nano /etc/apache2/sites-available/webchallenges.conf
+
+------ START ---------------
+
+<VirtualHost *:80>
+    ServerName localhost
+
+    Alias /airport /home/summitinternational/webchallenges
+
+    <Directory /home/summitinternational/webchallenges>
+        Options Indexes FollowSymLinks
+        AllowOverride None
+        Require all granted
+        DirectoryIndex index.html index.php
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/webchallenges_error.log
+    CustomLog ${APACHE_LOG_DIR}/webchallenges_access.log combined
+</VirtualHost>
+
+
+
+
+------END -----------
+
+
+Activated the website using:
+
+            sudo a2ensite webchallenges
+            sudo a2dissite 000-default
+            sudo systemctl reload apache2
+
+
+CSS file:
+
+--- START ---
+
+/* ===== Global ===== */
+body {
+    margin: 0;
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f6f8;
+    color: #333;
+}
+
+/* ===== Header ===== */
+.header {
+    background-color: #0b3d91;
+    color: white;
+    padding: 20px;
+}
+
+.header h1 {
+    margin: 0;
+    font-size: 28px;
+}
+
+.header p {
+    margin: 4px 0 0;
+    font-size: 14px;
+}
+
+/* ===== Hero Image ===== */
+.hero {
+    height: 260px;
+    background: url("/airport/assets/images/airport.jpg") no-repeat center center;
+    background-size: cover;
+}
+
+/* ===== Main Container ===== */
+.container {
+    max-width: 900px;
+    margin: -60px auto 40px;
+    background: white;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+/* ===== Login Box ===== */
+.login-box {
+    width: 320px;
+    border: 1px solid #ddd;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.login-box h3 {
+    margin-top: 0;
+    color: #0b3d91;
+}
+
+.login-box input {
+    width: 100%;
+    padding: 8px;
+    margin-bottom: 12px;
+    border: 1px solid #ccc;
+}
+
+.login-box input[type="submit"] {
+    background-color: #0b3d91;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+/* ===== Footer ===== */
+.footer {
+    text-align: center;
+    font-size: 12px;
+    color: #777;
+    padding: 20px;
+}
+
+
+
+
+--- END ---
+
+
+
+chmod 644 ~/webchallenges/assets/css/style.css
+
+
+Creating the HTML file:
+    nano ~/webchallenges/index.html
+
+---- START ----
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Summit International Airport</title>
+    <link rel="stylesheet" href="/airport/assets/css/style.css">
+</head>
+
+<body>
+
+<div class="header">
+    <h1>Summit International Airport</h1>
+    <p>Operations & Staff Portal</p>
+</div>
+
+<div class="hero"></div>
+
+<div class="container">
+    <h2>Staff Login</h2>
+
+    <div class="login-box">
+        <form method="post" action="login.php">
+            <input type="text" name="username" placeholder="Employee ID">
+            <input type="password" name="password" placeholder="Password">
+            <input type="submit" value="Log In">
+        </form>
+    </div>
+</div>
+
+<div class="footer">
+    © 2026 Summit International Airport Authority
+</div>
+
+</body>
+</html>
+
+
+--- END ----
+
+
+
+website image:
+    wget https://images.unsplash.com/photo-1542314831-068cd1dbfeeb -O airport.jpg
+    chmod 644 airport.jpg
+
+
+
+
+# Allow Apache to traverse /home
+sudo chmod o+x /home
+
+# Allow Apache to traverse your user directory
+sudo chmod o+x /home/summitinternational
+
+# Allow Apache to traverse the challenge directory
+chmod o+x /home/summitinternational/webchallenges
+
+
+^^^^ Needed to do this to fix permissions after checking error logs **
+
+
+Needed to make a log in:
+    nano ~/webchallenges/login.php
+
+---start---
+
+<?php
+ini_set('display_errors', 1);
+error_reporting(E_ALL);
+
+/*
+ INTENTIONALLY VULNERABLE LOGIN
+ CTF PURPOSES ONLY
+*/
+
+$conn = new mysqli("localhost", "ctfuser", "ctfpass", "Summit");
+
+if ($conn->connect_error) {
+    die("Database connection failed");
+}
+
+$username = $_POST['username'] ?? '';
+$password = $_POST['password'] ?? '';
+
+// ❌ NO sanitization — intentional SQLi
+$sql = "SELECT * FROM users WHERE username='$username' AND password='$password'";
+
+// Uncomment this line temporarily if you want to SEE the query
+// echo "<pre>$sql</pre>";
+
+$result = $conn->query($sql);
+
+if ($result && $result->num_rows > 0) {
+    echo "<h2>Login Successful</h2>";
+    echo "<p>Welcome, authorized user.</p>";
+    echo "<p><strong>Summit{ThisWasEasy}</strong></p>";
+} else {
+    echo "<h2>Login Failed</h2>";
+    echo "<p>Invalid employee credentials.</p>";
+}
+?>
+
+
+
+--- end ----
+
+
+' OR '1'='1' ##
+
+    This ^^ can by pass

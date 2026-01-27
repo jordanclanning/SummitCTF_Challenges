@@ -1,0 +1,76 @@
+RENAME THIS:        MALICIOUSCALCULATOR
+
+
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* blk_A7 = hex for "virginiatech" */
+unsigned char blk_A7[] = {
+    0x76,0x69,0x72,0x67,0x69,0x6e,
+    0x69,0x61,0x74,0x65,0x63,0x68
+};
+
+/* blk_B2 = hex for "Summit{GhirdaMaster}" */
+unsigned char blk_B2[] = {
+    0x53,0x75,0x6d,0x6d,0x69,0x74,0x7b,
+    0x47,0x68,0x69,0x72,0x64,0x61,
+    0x4d,0x61,0x73,0x74,0x65,0x72,0x7d
+};
+
+int cmp_blk(const char *buf) {
+    if (strlen(buf) != sizeof(blk_A7))
+        return 0;
+
+    for (int i = 0; i < sizeof(blk_A7); i++) {
+        if ((unsigned char)buf[i] != blk_A7[i])
+            return 0;
+    }
+    return 1;
+}
+
+void dump_blk() {
+    for (int i = 0; i < sizeof(blk_B2); i++)
+        putchar(blk_B2[i]);
+    putchar('\n');
+}
+
+int main() {
+    char buf0[64];
+    int x0, x1;
+    char c0;
+
+    printf("=== Simple Calculator ===\n");
+    printf("Enter a number or expression (e.g., 4 + 5): ");
+
+    fgets(buf0, sizeof(buf0), stdin);
+    buf0[strcspn(buf0, "\n")] = 0;
+
+    if (cmp_blk(buf0)) {
+        dump_blk();
+        return 0;
+    }
+
+    if (sscanf(buf0, "%d %c %d", &x0, &c0, &x1) == 3 ||
+        sscanf(buf0, "%d%c%d", &x0, &c0, &x1) == 3) {
+
+        switch (c0) {
+            case '+': printf("Result: %d\n", x0 + x1); break;
+            case '-': printf("Result: %d\n", x0 - x1); break;
+            case '*': printf("Result: %d\n", x0 * x1); break;
+            case '/':
+                if (x1 == 0)
+                    printf("Error: division by zero.\n");
+                else
+                    printf("Result: %d\n", x0 / x1);
+                break;
+            default:
+                printf("Invalid operator.\n");
+        }
+        return 0;
+    }
+
+    printf("Invalid input: strings are not supported.\n");
+    return 1;
+}

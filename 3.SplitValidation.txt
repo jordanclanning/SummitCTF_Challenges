@@ -1,0 +1,89 @@
+REChallnege6_SplitValidation
+
+///2. Split Validation Across Function
+***Must build out the flag accross several functions within the decompiler***
+
+
+Summit{split_logic_rocks}
+
+
+nano challenge_split.c
+
+---------------------
+
+
+#include <stdio.h>
+#include <string.h>
+
+int check_length(const char *s) {
+    return strlen(s) == 24;
+}
+
+int check_prefix(const char *s) {
+    return s[0] == 'S' &&
+           s[1] == 'u' &&
+           s[2] == 'm' &&
+           s[3] == 'm' &&
+           s[4] == 'i' &&
+           s[5] == 't';
+}
+
+int check_braces(const char *s) {
+    return s[6] == '{' && s[23] == '}';
+}
+
+int check_math(const char *s) {
+    // 's' ^ 0x20 = 'S'
+    return (s[7] ^ 0x20) == 'S';
+}
+
+int check_loop(const char *s) {
+    int sum = 0;
+    for (int i = 8; i < 13; i++) {
+        sum += s[i];
+    }
+    return sum == 545;
+}
+
+int check_suffix(const char *s) {
+    return s[18] == 'r' &&
+           s[19] == 'o' &&
+           s[20] == 'c' &&
+           s[21] == 'k' &&
+           s[22] == 's';
+}
+
+int main() {
+    char input[64];
+
+    printf("Enter access token: ");
+    fgets(input, sizeof(input), stdin);
+
+    // Remove newline
+    input[strcspn(input, "\n")] = 0;
+
+    if (check_length(input) &&
+        check_prefix(input) &&
+        check_braces(input) &&
+        check_math(input) &&
+        check_loop(input) &&
+        check_suffix(input)) {
+        puts("Access Granted");
+    } else {
+        puts("Access Denied");
+    }
+
+    return 0;
+}
+
+
+
+-------------------
+
+
+gcc -O0 -fPIE -pie -s challenge_split.c -o challenge_split
+
+strip challenge_split
+
+
+

@@ -1,0 +1,45 @@
+RENAME THIS: ClientSide_JAVASCRIPT 
+
+
+nano index.html
+
+----------
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Summit International Airport – Secure Portal</title>
+</head>
+<body>
+    <h1>Employee Access Portal</h1>
+    <p>Authorized staff only.</p>
+
+    <input type="text" id="code" placeholder="Enter access code">
+    <button onclick="checkCode()">Submit</button>
+
+    <p id="result"></p>
+
+    <script src="auth.js"></script>
+</body>
+</html>
+
+----------
+
+nano auth.js
+
+--------
+function checkCode() {
+    const input = document.getElementById("code").value;
+    const result = document.getElementById("result");
+
+    if (input === "SummitGateAccess2026") {
+        result.innerText = "Access granted: Summit{Client_Side_Logic_Is_Not_Security}";
+    } else {
+        result.innerText = "Access denied.";
+    }
+}
+
+--------
+
+sudo ln -s ~/webchallenges/web200_js_logic /var/www/html/web200
+
+http://localhost/web200

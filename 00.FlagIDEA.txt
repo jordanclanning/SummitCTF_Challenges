@@ -1,0 +1,30 @@
+
+WEB Challenges
+1.
+2. XSS using Cookie
+3. RCE via PHP
+4. Inspect HTML that has hidden link w/ flag
+5. change malware pcap
+
+
+RE Challenges:
+1. 
+
+
+*** Test in binary ninja ***
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

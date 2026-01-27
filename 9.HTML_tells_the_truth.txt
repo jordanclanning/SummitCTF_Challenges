@@ -1,0 +1,39 @@
+RENAME THIS: HTML_tells_the_truth
+
+Inspect HTML 
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Summit International Airport</title>
+</head>
+<body>
+    <h1>Summit International Airport</h1>
+    <p>Flight status system under maintenance.</p>
+
+    <!-- Summit{HTML_Source_Always_Tells_The_Truth} -->
+</body>
+</html>
+
+
+--------------------------
+
+sudo nano /etc/apache2/sites-available/webctf.conf
+
+
+Alias /web100 "/home/summitinternational/webchallenges/web100_hidden_html"
+
+<Directory "/home/summitinternational/webchallenges/web100_hidden_html">
+    Options Indexes FollowSymLinks
+    AllowOverride None
+    Require all granted
+</Directory>
+
+
+---------------------------------
+sudo a2ensite webctf
+sudo systemctl reload apache2
+
+
+
+http://localhost/web100

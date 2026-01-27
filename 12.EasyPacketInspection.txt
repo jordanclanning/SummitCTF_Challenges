@@ -1,0 +1,46 @@
+RENAME THIS:       EasyPacketInspection
+
+Scapy Payload:
+
+--- Start ---
+from scapy.all import *
+
+pkts = list(rdpcap("http-chunked-gzip.pcap"))
+
+# Clone a real HTTP packet to preserve TCP correctness
+base_pkt = pkts[3].copy()
+
+http_payload = (
+    b"GET / HTTP/1.1\r\n"
+    b"Host: www.summit.org:8080\r\n"
+    b"User-Agent: curl/7.46.0 Summit{AlwaysCheckThosePackets}\r\n"
+    b"Accept: */*\r\n"
+    b"Connection: close\r\n"
+    b"Accept-Encoding:\r\n\r\n"
+)
+
+# Replace payload only
+base_pkt[Raw].load = http_payload
+
+# Replace Wireshark packet #8
+pkts[7] = base_pkt
+
+# Maintain correct timing (between packet #7 and #9)
+pkts[7].time = pkts[6].time + 0.0002
+
+# Recalculate checksums
+del pkts[7][IP].chksum
+del pkts[7][TCP].chksum
+
+wrpcap("modified.pcap", pkts)
+
+
+
+--- End ---
+
+
+nano edit_pcap.py
+
+summitinternational@summitinternational-virtual-machine:~/Pcaps$ nano pcapedit.py
+summitinternational@summitinternational-virtual-machine:~/Pcaps$ python3 pcapedit.py 
+summitinternational@summitinternational-virtual-machine:~/Pcaps$ wireshark modified.pcap
