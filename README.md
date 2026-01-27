@@ -147,7 +147,7 @@ This repository exists solely for **defensive security education and professiona
 
 ## 👤 Author
 
-**Jordan Lanning | MIT, MPA **  
+**Jordan Lanning** | **MIT**, **MPA**  
 Cybersecurity Analyst  
 U.S. Army Veteran  
 
