@@ -1,0 +1,31 @@
+<?php
+// Deliberately insecure cookie (NOT HttpOnly)
+setcookie("session", "Summit{XSS_Can_Steal_Cookies}", time()+3600, "/");
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Summit International Airport Feedback</title>
+</head>
+<body>
+    <h1>Passenger Feedback</h1>
+    <p>Leave a comment for airport staff:</p>
+
+    <form method="GET">
+        <input type="text" name="comment" size="60">
+        <input type="submit">
+    </form>
+
+    <hr>
+
+    <p><strong>Latest Comment:</strong></p>
+    <div>
+        <?php
+        if (isset($_GET['comment'])) {
+            echo $_GET['comment']; // ❌ vulnerable to XSS
+        }
+        ?>
+    </div>
+</body>
+</html>
