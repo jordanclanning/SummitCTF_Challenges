@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Summit International Airport – Diagnostics</title>
+</head>
+<body>
+    <h1>System Diagnostics</h1>
+    <p>Enter a host to ping:</p>
+
+    <form method="GET">
+        <input type="text" name="host" placeholder="127.0.0.1">
+        <input type="submit" value="Run">
+    </form>
+
+    <pre>
+<?php
+if (isset($_GET['host'])) {
+    $host = $_GET['host'];
+    system("ping -c 1 " . $host); // ❌ RCE vulnerability
+}
+?>
+    </pre>
+</body>
+</html>
+
