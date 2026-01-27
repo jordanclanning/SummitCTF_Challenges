@@ -1,247 +1,156 @@
-🏔️ Summit International CTF – Challenge Walkthroughs
+# 🏔️ Summit International CTF – Security Analysis Portfolio
 
-This repository contains complete walkthroughs and source code for a custom Capture-the-Flag (CTF) series focused on reverse engineering, malware analysis, web exploitation, and SOC-relevant security flaws. Challenges are intentionally vulnerable and designed to reflect real-world issues encountered in incident response and defensive security operations.
+This repository showcases a curated set of security challenges, source code, and in-depth analytical writeups developed as part of an ongoing cybersecurity skills portfolio. The focus is on **analysis, detection, and defensive understanding of real-world vulnerabilities**, rather than offensive misuse.
 
-⚠️ Educational Use Only
-All challenges are intentionally insecure and must only be executed in isolated lab environments.
+The challenges reflect scenarios commonly encountered in **SOC operations, incident response, malware analysis, and application security**, emphasizing **methodical investigation, evidence correlation, and professional reporting**.
 
-📁 How This Repository Is Organized
+---
 
-Each challenge consists of two components:
+## 🎯 Purpose of This Repository
 
-📝 Walkthroughs (Authoritative Solutions)
+This project serves as a **public portfolio** demonstrating proficiency in:
 
-[number].txt files
-These are full, step-by-step writeups explaining:
+- Security alert triage and root-cause analysis  
+- Reverse engineering and memory inspection  
+- Web application vulnerability analysis  
+- Network traffic and log analysis  
+- Translating technical findings into executive-level reports  
 
-Vulnerability identification
+All material is designed for **educational and defensive security training**.
 
-Analysis methodology
+---
 
-Exploitation logic
+## 📁 Repository Structure
 
-Flag discovery
+Each challenge is intentionally split into **two distinct artifacts**.
 
-Defensive takeaways
+---
 
-Example:
+### 📝 Walkthroughs (Analysis & Methodology)
 
-6_EASY_SQLChallenge.txt
+- **`[number].txt` files**
 
-💻 Challenge Source Code
+These files contain **full analytical writeups**, including:
 
-All other files (.c, .py, .php, .html, .js, .sql, etc.) are the actual vulnerable challenge implementations used by participants.
+- Threat and vulnerability identification  
+- Investigation approach and tooling  
+- Evidence analysis  
+- Flag discovery rationale  
+- Defensive and detection takeaways  
 
-Examples:
+These writeups demonstrate **how to think like a security analyst**, not just how to exploit a flaw.
 
-BufferOverflow.c
-MaliciousCalculator.c
-EASY_SQLChallenge.php
-ClientSide.js
-EasyPacketInspection.py
+---
 
-🧩 Challenge Categories
-🔐 Validation & Authentication
+### 💻 Challenge Source Code
 
-Code
+All other files (`.c`, `.py`, `.php`, `.html`, `.js`, `.sql`, etc.) represent **intentionally vulnerable challenge code** used to support the analysis documented in the walkthroughs.
 
-ValidationSplit.c
+The code exists to:
 
-ClientSide.html
+- Provide realistic artifacts for analysis  
+- Enable reverse engineering and inspection  
+- Support lab-based learning environments  
 
-ClientSide.js
+---
 
-Writeups
+## 🧩 Challenge Domains
 
-2_VALIDATIONSPLIT.txt
+### 🔐 Validation & Authentication Logic
+Focus areas include:
+- Client-side vs server-side trust
+- Split validation flaws
+- Authentication bypass logic
 
-3_SplitValidation.txt
+---
 
-Focus:
+### 🌐 Web Application Security
+Focus areas include:
+- SQL injection fundamentals
+- Cross-site scripting (XSS)
+- Hidden client-side logic
+- Input handling flaws
 
-Split validation logic
+---
 
-Client-side trust failures
+### 🧵 Reverse Engineering & Memory Analysis
+Focus areas include:
+- Static and dynamic analysis of C binaries
+- Stack-based buffer overflows
+- Runtime memory inspection
+- Debugging and reverse engineering workflows
 
-Reverse engineering validation routines
+---
 
-🌐 Web Exploitation
+### 📡 Network & Behavioral Analysis
+Focus areas include:
+- Packet inspection
+- Suspicious user-agent identification
+- Behavioral anomaly detection
 
-Code
+---
 
-HTML_tells_the_truth.html
+### 🧾 Reporting & Communication
+Focus areas include:
+- Technical incident documentation
+- Executive-level summaries
+- Evidence-based reporting standards
 
-RemoteCodeExecution.html
+---
 
-XSS_Using_Cookies.php
+## 🏁 Flags
 
-Writeups
+All challenges use a consistent flag format:
 
-9_HTML_tells_the_truth.txt
 
-Focus:
+Flags are used solely as **verification artifacts** and may be encoded, fragmented, or discovered through analysis rather than direct output.
 
-Hidden logic in HTML/JS
+---
 
-XSS and RCE fundamentals
+## 🛠️ Tools & Techniques Demonstrated
 
-Input handling flaws
+- Ghidra and GDB  
+- Wireshark and packet inspection  
+- CyberChef  
+- Browser Developer Tools  
+- Linux command-line utilities  
+- Secure coding and analysis principles  
 
-🧵 Reverse Engineering & Memory Exploitation
+---
 
-Code
+## 🧠 Skills Demonstrated
 
-BufferOverflow.c
+This portfolio highlights skills relevant to:
 
-SplitMemory.c
+- SOC Analyst (Tier I–III)  
+- Incident Response  
+- Malware Analysis  
+- Detection Engineering  
+- Reverse Engineering (foundational)  
+- Technical and Executive Reporting  
 
-SplitMemory.py
+---
 
-MaliciousCalculator.c
+## 🧪 Safe Usage
 
-Writeups
+- Run all challenges in **isolated lab environments only**  
+- Do **not** deploy to production systems  
+- No live targets or real data  
 
-5_MALICIOUSCALCULATOR.txt
+---
 
-Focus:
+## 📜 Ethical Notice
 
-Stack overflows
+This repository exists solely for **defensive security education and professional skill demonstration**. No material is intended for unauthorized or malicious use.
 
-Memory inspection
+---
 
-Runtime flag discovery
+## 👤 Author
 
-GDB + Ghidra workflows
+**Jordan Lanning | MIT, MPA **  
+Cybersecurity Analyst  
+U.S. Army Veteran  
 
-🗃️ SQL Injection
-
-Code
-
-EASY_SQLChallenge.html
-
-EASY_SQLChallenge.php
-
-EASY_SQLChallenge.sql
-
-EASY_SQLChallenge.css
-
-EASY_SQLChallenge.conf
-
-Writeups
-
-6_EASY_SQLChallenge.txt
-
-7_EASY_SQLChallenge.txt
-
-Focus:
-
-Authentication bypass
-
-Query manipulation
-
-Backend logic abuse
-
-📡 Network & Log Analysis
-
-Code
-
-EasyPacketInspection.py
-
-SuspiciousUserAgents.py
-
-Writeups
-
-Included inline in numbered walkthroughs
-
-Focus:
-
-Packet inspection
-
-Log anomaly detection
-
-Behavioral analysis
-
-🧾 Reporting & Documentation
-
-Code
-
-ExecutiveReportAuth.c
-
-Writeups
-
-8_ExecutiveReports2026.txt
-
-Focus:
-
-Translating technical findings into executive-level reporting
-
-Incident documentation discipline
-
-🏁 Flags
-
-All challenges use the standard flag format:
-
-Summit{flag_here}
-
-
-Flags may be:
-
-Encoded
-
-Split across memory
-
-Generated at runtime
-
-Revealed through exploitation rather than output
-
-🛠️ Recommended Tools
-
-Ghidra
-
-GDB
-
-Wireshark
-
-CyberChef
-
-Burp Suite
-
-SQLMap
-
-Browser Developer Tools
-
-Linux CLI utilities
-
-🧠 Learning Objectives
-
-Participants will gain hands-on experience with:
-
-Reverse engineering C binaries
-
-Web application exploitation
-
-Memory analysis and debugging
-
-Network and log analysis
-
-Writing professional incident and executive reports
-
-🧪 Environment Requirements
-
-Linux VM (Ubuntu or Kali recommended)
-
-Local web server (Apache / PHP)
-
-GCC for C compilation
-
-Isolated lab only — never production
-
-📜 Disclaimer
-
-This repository is provided strictly for educational and defensive security training. Misuse outside of authorized lab environments is prohibited.
-
-👤 Author
-
-Jordan Lanning
+🔗 LinkedIn: https://www.linkedin.com/in/jordanclanning/
 
 # CTF_Challenges
