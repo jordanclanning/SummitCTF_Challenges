@@ -1,17 +1,60 @@
+
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Summit International Airport – Secure Portal</title>
+    <meta charset="UTF-8">
+    <title>Summit International Airport – Employee Access Terminal</title>
+
+    <style>
+        body {
+            background-color: #0b1c2d;
+            color: #e6edf3;
+            font-family: monospace;
+            padding: 40px;
+        }
+        h1 {
+            color: #4db8ff;
+        }
+        input {
+            background-color: #102a43;
+            color: #ffffff;
+            border: 1px solid #4db8ff;
+            padding: 6px;
+        }
+        button {
+            background-color: #1f6fb2;
+            color: #ffffff;
+            border: none;
+            padding: 6px 12px;
+            margin-left: 6px;
+            cursor: pointer;
+        }
+        #result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #4db8ff;
+            background-color: #071521;
+        }
+    </style>
 </head>
+
 <body>
-    <h1>Employee Access Portal</h1>
-    <p>Authorized staff only.</p>
 
-    <input type="text" id="code" placeholder="Enter access code">
-    <button onclick="checkCode()">Submit</button>
+<h1>Summit International Airport</h1>
+<h3>Employee Access Terminal</h3>
 
-    <p id="result"></p>
+<p>
+Restricted system.  
+Authorized airport operations staff only.
+</p>
 
-    <script src="auth.js"></script>
+<input type="text" id="code" placeholder="Enter access code">
+<button onclick="checkCode()">Submit</button>
+
+<p id="result"></p>
+
+<script src="auth.js"></script>
+
 </body>
 </html>
+
