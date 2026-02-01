@@ -1,47 +1,116 @@
-from scapy.all import *
 
-# Base64-encoded flag: Summit{WarmCookie_Cookie_Exfil}
-ENCODED_FLAG = b"; exfil=U3VtbWl0e1dhcm1Db29raWVfQ29va2llX0V4ZmlsfQ=="
+#!/usr/bin/env python3
 
-INPUT_PCAP = "warmcookie_ctf.pcap"
-OUTPUT_PCAP = "warmcookie_ctf_flagged.pcap"
+from scapy.all import rdpcap, wrpcap, TCP, IP, Raw
 
-pkts = rdpcap(INPUT_PCAP)
-out = []
-inserted = False
+PCAP_IN  = "[modify_this] WarmCookie Malware.pcap"
+PCAP_OUT = "WarmCookie_Malware_patched.pcap"
 
-for p in pkts:
-    if (
-        not inserted
-        and p.haslayer(IP)
-        and p.haslayer(TCP)
-        and p.haslayer(Raw)
-        and p[IP].src == "10.8.15.133"
-        and p[IP].dst == "72.5.43.29"
-    ):
-        payload = p[Raw].load
+DOS_MSG  = b"This program cannot be run in DOS mode."
+B64_FLAG = b" U3VtbWl0e1dhcm1Db29raWVfQ29va2llX0V4ZmlsfQ=="  # leading space
 
-        # Look for raw HTTP POST with Cookie header
-        if payload.startswith(b"POST ") and b"Cookie:" in payload:
-            lines = payload.split(b"\r\n")
+PATCH_LEN = len(B64_FLAG)
 
-            for i, line in enumerate(lines):
-                if line.startswith(b"Cookie:"):
-                    lines[i] = line + ENCODED_FLAG
-                    inserted = True
-                    break
+print(f"[+] Loading PCAP: {PCAP_IN}")
+pkts = rdpcap(PCAP_IN)
 
-            p[Raw].load = b"\r\n".join(lines)
+# ---------------------------------------------------------
+# 1) Find the packet containing the DOS message
+# ---------------------------------------------------------
+anchor_pkt = None
+anchor_idx = None
 
-            # Recalculate checksums
-            del p[IP].chksum
-            del p[TCP].chksum
+for i, p in enumerate(pkts):
+    if p.haslayer(TCP) and p.haslayer(Raw):
+        if DOS_MSG in bytes(p[Raw].load):
+            anchor_pkt = p
+            anchor_idx = i
+            break
 
-    out.append(p)
+if not anchor_pkt:
+    raise SystemExit("[-] Could not find DOS message in any TCP payload")
 
-wrpcap(OUTPUT_PCAP, out)
+print(f"[+] Found DOS message in packet {anchor_idx}")
 
-if inserted:
-    print("[+] Flag successfully injected into Cookie header")
-else:
-    print("[-] No suitable packet found; flag NOT injected")
+# ---------------------------------------------------------
+# 2) Lock onto the TCP flow (Wireshark tcp.stream equivalent)
+# ---------------------------------------------------------
+SRC_IP   = anchor_pkt[IP].src
+DST_IP   = anchor_pkt[IP].dst
+SRC_PORT = anchor_pkt[TCP].sport
+DST_PORT = anchor_pkt[TCP].dport
+
+print(f"[+] Locking onto flow {SRC_IP}:{SRC_PORT} -> {DST_IP}:{DST_PORT}")
+
+# ---------------------------------------------------------
+# 3) Collect ALL packets in this flow with payload
+# ---------------------------------------------------------
+flow_packets = []
+
+for i, p in enumerate(pkts):
+    if p.haslayer(TCP) and p.haslayer(Raw):
+        if (p[IP].src == SRC_IP and p[IP].dst == DST_IP and
+            p[TCP].sport == SRC_PORT and p[TCP].dport == DST_PORT):
+            flow_packets.append((i, p))
+
+if not flow_packets:
+    raise SystemExit("[-] No packets found for target flow")
+
+print(f"[+] Found {len(flow_packets)} packets in target flow")
+
+# ---------------------------------------------------------
+# 4) Reconstruct TCP byte stream using sequence numbers
+# ---------------------------------------------------------
+seq_base = min(int(p[TCP].seq) for _, p in flow_packets)
+
+segments = []
+max_end = 0
+
+for idx, p in flow_packets:
+    payload = bytes(p[Raw].load)
+    offset = int(p[TCP].seq) - seq_base
+    end = offset + len(payload)
+    segments.append((idx, offset, len(payload)))
+    max_end = max(max_end, end)
+
+stream = bytearray(b"\x00" * max_end)
+
+for idx, off, ln in segments:
+    stream[off:off+ln] = bytes(pkts[idx][Raw].load)
+
+# ---------------------------------------------------------
+# 5) Patch the DOS stub
+# ---------------------------------------------------------
+pos = bytes(stream).find(DOS_MSG)
+if pos == -1:
+    raise SystemExit("[-] DOS message not found in reconstructed stream")
+
+insert_at = pos + len(DOS_MSG)
+
+if insert_at + PATCH_LEN > len(stream):
+    raise SystemExit("[-] Not enough padding after DOS message")
+
+print(f"[+] Patching DOS stub at stream offset {insert_at}")
+
+stream[insert_at:insert_at + PATCH_LEN] = B64_FLAG
+
+# ---------------------------------------------------------
+# 6) Write patched bytes back into SAME packets
+# ---------------------------------------------------------
+for idx, off, ln in segments:
+    pkts[idx][Raw].load = bytes(stream[off:off+ln])
+
+    if pkts[idx].haslayer(IP):
+        del pkts[idx][IP].len
+        del pkts[idx][IP].chksum
+    if pkts[idx].haslayer(TCP):
+        del pkts[idx][TCP].chksum
+
+# ---------------------------------------------------------
+# 7) Save patched PCAP
+# ---------------------------------------------------------
+wrpcap(PCAP_OUT, pkts)
+
+print(f"[+] SUCCESS: wrote patched PCAP -> {PCAP_OUT}")
+
+
