@@ -1,32 +1,14 @@
 #include <stdio.h>
 #include <stdint.h>
 
-struct frame {
-    char buf[16];
-    volatile int state;
-};
-
-void unlock() {
+void unlock(void) {
     unsigned char data[] = {
-        0x01 ^ 0x53,  // S
-        0x01 ^ 0x75,  // u
-        0x01 ^ 0x6d,  // m
-        0x01 ^ 0x6d,  // m
-        0x01 ^ 0x69,  // i
-        0x01 ^ 0x74,  // t
-        0x01 ^ 0x7b,  // {
-        0x01 ^ 0x4f,  // O
-        0x01 ^ 0x76,  // v
-        0x01 ^ 0x65,  // e
-        0x01 ^ 0x72,  // r
-        0x01 ^ 0x66,  // f
-        0x01 ^ 0x6c,  // l
-        0x01 ^ 0x6f,  // o
-        0x01 ^ 0x77,  // w
-        0x01 ^ 0x34,  // 4
-        0x01 ^ 0x74,  // t
-        0x01 ^ 0x77,  // w
-        0x01 ^ 0x7d,  // }
+        0x01 ^ 0x53, 0x01 ^ 0x75, 0x01 ^ 0x6d, 0x01 ^ 0x6d,
+        0x01 ^ 0x69, 0x01 ^ 0x74, 0x01 ^ 0x7b,
+        0x01 ^ 0x4f, 0x01 ^ 0x76, 0x01 ^ 0x65,
+        0x01 ^ 0x72, 0x01 ^ 0x66, 0x01 ^ 0x6c,
+        0x01 ^ 0x6f, 0x01 ^ 0x77, 0x01 ^ 0x34,
+        0x01 ^ 0x74, 0x01 ^ 0x77, 0x01 ^ 0x7d,
         0x00
     };
 
@@ -36,23 +18,30 @@ void unlock() {
     putchar('\n');
 }
 
-int main() {
-    struct frame f;
-    f.state = 0;
-
+void check_password(void) {
+    char buf[64];
+    volatile uint32_t auth = 0;  // Auth flag on stack
+    
     puts("=== RANSOMWARE LOCKED ===");
     puts("Enter decryption password:");
-
-    gets(f.buf);   // INTENTIONAL VULNERABILITY
-
-    if (f.state == 1) {
-        puts("\nDecryption successful.");
+    
+    gets(buf);  // INTENTIONAL VULNERABILITY
+    
+    // Method 1: Overflow to overwrite 'auth'
+    if (auth == 0xDEADBEEF) {
+        puts("\n[Method 1] Auth flag overwritten!");
         unlock();
-    } else {
-        puts("\nDecryption failed.");
+        return;
     }
+    
+    puts("\nDecryption failed.");
+    // Method 2: Students can overwrite return address to jump to unlock()
+}
 
+int main(void) {
+    check_password();
     return 0;
 }
 
 // example output to produce the flag: python3 -c "print('A'*16 + '\x01\x00\x00\x00')" | ./ransomware 
+// Above is not the code reveal
