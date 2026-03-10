@@ -149,6 +149,7 @@ This repository exists solely for **defensive security education and professiona
 
 **Jordan Lanning** | **MIT**, **MPA**  
 GCIH | GMON | GREM (In Progress) | CySA+
+
 Cybersecurity Analyst  
 U.S. Army Veteran  
 
